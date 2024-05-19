@@ -11,6 +11,9 @@ SIZE = (WIDTH,HEIGHT)
 lost = 0
 score = 0
 monsters_num = 5
+healths = 3
+
+
 
 
 window = pygame.display.set_mode(SIZE)
@@ -124,9 +127,55 @@ while game:
 
         text_lost = font_medium.render("Пропущено:" + str(lost),True, (255,255,255))
         text_score = font_medium.render("Рахунок: " + str(score),True, (255,255,255))
+        text_healths = font_medium.render("ХП: " + str(healths),True, (255,255,255))
+
 
         window.blit(text_score,(0,0))
         window.blit(text_lost,(0,40))
+        window.blit(text_healths,(0,80))
+
+        shot_monsters = pygame.sprite.groupcollide(monsters,bullets,True,True)
+        for i in shot_monsters:
+            new_enemy = Enemy("ufo.png",(randint(50,WIDTH-50),0),randint(2,8),(75,50))
+            monsters.add(new_enemy)
+            score += 1
+
+        
+        collisions = pygame.sprite.spritecollide(player,monsters, True)
+        for c in collisions:
+            healths -= 1
+            new_enemy = Enemy("ufo.png",(randint(50,WIDTH-50),0),randint(2,8),(75,50))
+            monsters.add(new_enemy)
+            
+
+
+
+
+
+
+
+
+
+        if score >= 10:
+            finish = True
+            monsters.empty()
+
+            text_win = font_big.render("Ти переміг", True,(200,0,100))
+            window.blit(text_win, (WIDTH/2-50,HEIGHT/2))
+
+        if lost >= 10 or healths <= 0:
+            finish = True
+            monsters.empty()
+            
+            text_lose = font_big.render("Ти програв", True,(200,0,100))
+            window.blit(text_lose, (WIDTH/2-50,HEIGHT/2))
+
+
+
+
+
+
+
         
     pygame.display.update()
     clock.tick(FPS)
